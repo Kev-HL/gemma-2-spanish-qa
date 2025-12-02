@@ -29,10 +29,8 @@ Although inspired by the Kaggle Gemma Language Tuning competition, the true aim 
   The dataset, which is derived from paragraphs in Wikipedia, is licensed under *CC-BY-SA 3.0*. The code in the repository is licensed according to *Attribution-NonCommercial 4.0 International*.
 - Spanish subset of XQuAD ([google/xquad](https://huggingface.co/datasets/google/xquad))
   This dataset is distributed under the *CC BY-SA 4.0* license.
-- **Bonus/Robustness Evaluation:**  
+- **Bonus Evaluation:**  
 - SQuAD-es v2 (for potential “no answer” capability, same translation source as v1.1, same licensing)
-- TyDi QA (Spanish, gold passage benchmark, [google-research-datasets/tydiqa](https://huggingface.co/datasets/google-research-datasets/tydiqa))
-  The repository is distributed under *Apache License 2.0*.
 - PAWS-X (Spanish, paraphrase pairs for ablation/robustness, [google-research-datasets/paws-x](https://huggingface.co/datasets/google-research-datasets/paws-x))
   Free use license, data sourced from Google LLC.
 
@@ -70,7 +68,6 @@ data/       # Dataset and annotations
 - SQuAD (translation): [Automatic Spanish Translation of the SQuAD Dataset for Multilingual Question Answering](https://arxiv.org/abs/1912.05200) (Carrino, Costa-jussà, Fonollosa. arXiv 2019)
 - MLQA: [MLQA: Evaluating Cross-lingual Extractive Question Answering](https://arxiv.org/abs/1910.07475) (Lewis, Oguz, Rinott, Riedel, Schwenk. arXiv 2019)
 - XQuAD: [On the cross-lingual transferability of monolingual representations](https://arxiv.org/abs/1910.11856) (Artetxe, Ruder, Yogatama. arXiv 2019)
-- TyDi QA: [TyDi QA: A Benchmark for Information-Seeking Question Answering in Typologically Diverse Languages](https://storage.googleapis.com/tydiqa/tydiqa.pdf) (Clark, Choi, Collins, Garrette, Kwiatkowski, Nikolaev, Palomaki. TACL 2020)
 - PAWS: [PAWS: Paraphrase Adversaries from Word Scrambling](https://arxiv.org/abs/1904.01130) (Zhang, Baldridge, He. NAACL 2019)
 - PAWS-X: [PAWS-X: A Cross-lingual Adversarial Dataset for Paraphrase Identification](https://arxiv.org/abs/1908.11828) (Yang, Zhang, Tar, Baldridge. EMNLP 2019)
 
