@@ -17,9 +17,9 @@
   - Apply and document ML engineering practices (version control, experiment tracking, testing, reproducibility, deployment).
 
 - **Model Variant Choice:**  
-  Gemma is available in multiple sizes (2B, 7B, 9B, 27B). For this project:
+  Gemma is available in multiple sizes (2B, 9B, 27B). For this project:
   - Gemma 2B will be used for initial development, prototyping, and experimentation, given its lower resource requirements and sufficient capacity for demonstrating the fine-tuning workflow.
-  - If pipeline and resource constraints permit, results will be extended to Gemma 7B to benchmark improvements and analyze scalability.
+  - If pipeline and resource constraints permit, results will be extended to Gemma 9B to benchmark improvements and analyze scalability.
 
 - **Intended Audience:**  
   - Technical recruiters
@@ -52,11 +52,11 @@
     - Fine-tuning via supervised learning (SFT/QLoRA based on resource constraints)  
     - Evaluation on general Spanish tasks (QA)
     - Model serving and basic performance benchmarks
-    - 2B model for all steps; 7B stretch goal/ablation if resources allow 
+    - 2B model for all steps; 9B stretch goal/ablation if resources allow 
   - **Out-of-Scope:**  
     - Domain-specific adaptation (medical/legal/technical or specific dialect Spanish)  
     - RLHF-style reinforcement learning  
-    - Larger Gemma models (9B, 27B—not practical for current hardware)
+    - Larger Gemma models (27B—not practical for current hardware)
     - Large-scale human evaluation or robust bias/fairness analysis
 
 ---
