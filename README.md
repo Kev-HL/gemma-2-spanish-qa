@@ -72,8 +72,14 @@ data/       # Dataset and annotations
 - PAWS-X: [PAWS-X: A Cross-lingual Adversarial Dataset for Paraphrase Identification](https://arxiv.org/abs/1908.11828) (Yang, Zhang, Tar, Baldridge. EMNLP 2019)
 
 **Kaggle competition:**
-[Google Gemma Global Communication Comp Announcement](https://discuss.ai.google.dev/t/join-the-competition-unlock-global-communication-with-gemma/47814)
-[Kaggle Gemma Language Tuning Comp](https://www.kaggle.com/competitions/gemma-language-tuning)
+- [Google Gemma Global Communication Comp Announcement](https://discuss.ai.google.dev/t/join-the-competition-unlock-global-communication-with-gemma/47814)
+- [Kaggle Gemma Language Tuning Comp](https://www.kaggle.com/competitions/gemma-language-tuning)
+
+**Sentence Transformers (sentence similarity):**  
+- [SentenceTransformer](https://www.sbert.net/)
+- [SentenceTransformer Pretrained Models Leaderboard](https://www.sbert.net/docs/sentence_transformer/pretrained_models.html#original-models)
+- [Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084) (Reimers, Gurevich, EMNLP 2019)
+- [MTEB: Massive Text Embedding Benchmark](https://arxiv.org/abs/2210.07316) (Muennighoff, Tazi1, Magne1, Reimers. arXiv 2022)
 
 ---
 

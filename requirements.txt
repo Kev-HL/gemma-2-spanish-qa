@@ -1,4 +1,9 @@
 black
 datasets
 flake8
+numpy
+pandas
+protobuf
 pytest
+sentence-transformers
+transformers
