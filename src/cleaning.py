@@ -412,14 +412,14 @@ def check_mbert_input_truncation(
     tkn_seq_len_limit = getattr(tokenizer, "model_max_length", max_seq_length)
     max_length = min(tkn_seq_len_limit, max_seq_length)
 
-    # Remove leading/trailing whitespace from questions and contexts
+    # Remove leading/trailing whitespace from questions
     questions = [q.strip() for q in df["question"]]
-    contexts = [c.strip() for c in df["context"]]
+    # context will be left as is, to not cause mismatch with answer_start positions
 
     # Tokenize all inputs
     tokenized_input = tokenizer(
         questions,
-        contexts,
+        df["context"].tolist(),
         truncation=False,  # need false to check truncation
     )
 

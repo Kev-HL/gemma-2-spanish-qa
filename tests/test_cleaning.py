@@ -361,7 +361,7 @@ class TestCheckMbertInputTruncation:
         )
 
         check_mbert_input_truncation(df, mock_tokenizer, max_seq_length)
-        mock_tokenizer.assert_called_with(["q?"], ["ctx"], truncation=False)
+        mock_tokenizer.assert_called_with(["q?"], [" ctx "], truncation=False)
 
 
 class TestCheckGemma2InputTruncation:
