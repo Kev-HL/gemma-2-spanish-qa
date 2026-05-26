@@ -23,10 +23,10 @@ test_integration:
 # Lint code (format with black and check with flake8))
 lint:
 	@echo "Linting source code"
-	python -m black src/ tests/
+	python -m black src/ tests/ scripts/
 	# .flake8 file is configured with max-line-length = 88 
 	# and ignore = E203, W503 for compatibility with black formatting
-	python -m flake8 src/ tests/
+	python -m flake8 src/ tests/ scripts/
 
 # Clean temporary files
 clean:
