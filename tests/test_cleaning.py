@@ -1,6 +1,7 @@
 """Unit tests for some of the cleaning.py functions, located in src/cleaning.py"""
 
 # Standard imports
+import logging
 from unittest.mock import Mock
 
 # Third party imports
@@ -9,7 +10,7 @@ import pandas as pd
 import pytest
 
 # Local imports
-from src.cleaning import (
+from cleaning import (
     explode_answers_dict,
     explode_answers_lists,
     explode_answers,
@@ -85,7 +86,7 @@ class TestExplodeAnswersLists:
         assert result.iloc[2]["answer_start"] == 5
         assert result.iloc[2]["text"] == "baz"
 
-    def test_empty_answers_dropped_with_warning(self):
+    def test_empty_answers_dropped_with_warning(self, caplog):
         """Test that rows with empty answer lists are dropped with warning"""
         df = pd.DataFrame(
             {
@@ -97,9 +98,8 @@ class TestExplodeAnswersLists:
             }
         )
 
-        with pytest.warns(
-            UserWarning, match="Dropped 1 rows with empty answer lists after explode."
-        ):
+        # Capture logs at WARNING level
+        with caplog.at_level(logging.WARNING, logger="cleaning"):
             result = explode_answers_lists(df)
 
         # Q1 should be dropped, Q2 and Q3 should remain (exploded)
@@ -107,6 +107,7 @@ class TestExplodeAnswersLists:
         assert result.iloc[0]["answer_start"] == 0
         assert result.iloc[1]["answer_start"] == 10
         assert result.iloc[2]["answer_start"] == 5
+        assert "Dropped 1 rows with empty answer lists after explode." in caplog.text
 
     def test_mismatch_lengths_error(self):
         """Test that mismatched list lengths raise ValueError"""

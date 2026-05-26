@@ -4,8 +4,8 @@ and EDA stages of the project.
 """
 
 # Standard imports
+import logging
 import re
-import warnings
 from typing import Callable
 
 # Third-party imports
@@ -14,6 +14,9 @@ import pandas as pd
 from datasets import Dataset
 from sentence_transformers import SentenceTransformer, util
 from transformers import AutoTokenizer
+
+# Set up logger
+logger = logging.getLogger(__name__)
 
 
 # Function to harmonize (format) HF datasets
@@ -49,6 +52,7 @@ def harmonize_squad_format(dataset: Dataset) -> Dataset:
     """
 
     # Input validation
+    logger.info("Starting input validation for dataset.")
     if not isinstance(dataset, Dataset):
         raise TypeError("Input must be a Hugging Face Dataset object.")
 
@@ -98,8 +102,10 @@ def harmonize_squad_format(dataset: Dataset) -> Dataset:
                     raise ValueError(
                         f"Title {title_idx}, QA {qa_idx}: answers must be nonempty list"
                     )
+    logger.info("Input dataset passed validation checks.")
 
     # Data formatting
+    logger.info("Starting data formatting.")
     records = []
     for title in data:
         for paragraph in title["paragraphs"]:
@@ -115,6 +121,9 @@ def harmonize_squad_format(dataset: Dataset) -> Dataset:
                         "answers": {"text": text, "answer_start": answer_start},
                     }
                 )
+    logger.info(f"Formatted {len(records)} QA samples from the input dataset.")
+    if not records:
+        raise ValueError("No valid QA samples were extracted from the dataset.")
 
     return Dataset.from_list(records)
 
@@ -244,10 +253,7 @@ def explode_answers_lists(df: pd.DataFrame) -> pd.DataFrame:
     df = df.dropna(subset=["answer_pair"])
     dropped = initial_rows - len(df)
     if dropped > 0:
-        warnings.warn(
-            f"Dropped {dropped} rows with empty answer lists after explode.",
-            UserWarning,
-        )
+        logger.warning(f"Dropped {dropped} rows with empty answer lists after explode.")
 
     df["answer_start"] = df["answer_pair"].apply(lambda x: x[0])
     df["text"] = df["answer_pair"].apply(lambda x: x[1])
@@ -274,6 +280,15 @@ def unexplode_answers(df: pd.DataFrame) -> pd.DataFrame:
     Note that any additional columns will be lost to guarantee correct grouping.
     """
     df = df.copy()
+
+    # Check if extra columns are present that would be lost during grouping
+    expected_cols = {"id", "context", "question", "answer_start", "text"}
+    extra_cols = set(df.columns) - expected_cols
+    if extra_cols:
+        logger.warning(
+            f"Extra columns {extra_cols} will be lost during unexplode. "
+            f"Only 'id', 'context', 'question', 'answer_start', and 'text' will remain."
+        )
 
     grouped = df.groupby(["id", "context", "question"])
     records = []
@@ -337,7 +352,7 @@ def factory_no_tokens(tokenizer: AutoTokenizer) -> Callable[[str], bool]:
         if not isinstance(s, str):
             raise TypeError(f"Expected string, got {type(s).__name__}")
 
-        # Strip whitespace to avoid issues with tokenizers behaving differntly with
+        # Strip whitespace to avoid issues with tokenizers behaving differently with
         # strings that are only whitespace.
         # This may also help catch empty entries that are not empty strings.
         tokens = tokenizer.tokenize(s.strip())
@@ -373,7 +388,7 @@ def factory_unk_tokens(tokenizer: AutoTokenizer) -> Callable[[str], bool]:
         if not isinstance(s, str):
             raise TypeError(f"Expected string, got {type(s).__name__}")
 
-        # Strip whitespace to avoid issues with tokenizers behaving differntly with
+        # Strip whitespace to avoid issues with tokenizers behaving differently with
         # strings that are only whitespace.
         # This may also help catch empty entries that are not empty strings.
         tokens = tokenizer.tokenize(s.strip())

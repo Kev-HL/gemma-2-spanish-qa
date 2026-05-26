@@ -4,18 +4,14 @@ These are integration tests that use real tokenizers (external resource).
 This is intended to run locally and not in CI.
 """
 
-# Standard imports
-import os
-
 # Third-party imports
 import pandas as pd
 import pytest
-from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer
 
 # Local imports
-from src.cleaning import (
+from cleaning import (
     factory_no_tokens,
     factory_unk_tokens,
     check_mbert_input_truncation,
@@ -23,25 +19,29 @@ from src.cleaning import (
     filter_by_gemma2_tokenized_length,
     embed_sim_matrix,
 )
+from src.credentials import load_hf_credentials
 
-# Load Hugging Face access token for Gemma 2 (gated access).
-# While Hugging Face supports multiple authentication methods, these tests expect
-# HF_TOKEN to be available either as an environment variable or in a local .env file.
-load_dotenv()
-hf_token = os.getenv("HF_TOKEN")
+# Load Hugging Face access token from .env
+# (Assumes .env file with HF_TOKEN=hf_... exists on cwd)
+hf_token = load_hf_credentials()
 
 
 # Fixtures for tokenizers
 @pytest.fixture(scope="module")
 def tkn_mbert():
     """Load mBERT tokenizer once per module"""
-    return AutoTokenizer.from_pretrained("bert-base-multilingual-cased")
+    return AutoTokenizer.from_pretrained(
+        "bert-base-multilingual-cased",
+        token=hf_token,  # Public access, but passing token to increase rate limits
+    )
 
 
 @pytest.fixture(scope="module")
 def tkn_gemma2():
     """Load Gemma2 tokenizer once per module"""
-    return AutoTokenizer.from_pretrained("google/gemma-2-2b", token=hf_token)
+    return AutoTokenizer.from_pretrained(
+        "google/gemma-2-2b", token=hf_token  # Gated access, token required
+    )
 
 
 @pytest.fixture(params=["tkn_mbert", "tkn_gemma2"])
