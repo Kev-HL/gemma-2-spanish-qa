@@ -62,6 +62,21 @@ def validate_training_config(cfg: Dict[str, Any], cfg_type: str) -> None:
         raise ValueError("Cannot use both bf16 and fp16")
     if trainer_cfg.get("bf16_full_eval") and trainer_cfg.get("fp16_full_eval"):
         raise ValueError("Cannot use both bf16_full_eval and fp16_full_eval")
+    model_dtype = cfg["model"].get("model_dtype", "")
+    # Check bf16 settings
+    if trainer_cfg.get("bf16_full_eval") or trainer_cfg.get("bf16"):
+        if model_dtype != "bfloat16":
+            logger.warning(
+                f"bf16 enabled but model_dtype is '{model_dtype}', not 'bfloat16'. "
+                f"Consider matching them for consistency."
+            )
+    # Check fp16 settings
+    if trainer_cfg.get("fp16_full_eval") or trainer_cfg.get("fp16"):
+        if model_dtype != "float16":
+            logger.warning(
+                f"fp16 enabled but model_dtype is '{model_dtype}', not 'float16'. "
+                f"Consider matching them for consistency."
+            )
     # load_best_model_at_end requires compatible strategies
     if trainer_cfg.get("load_best_model_at_end"):
         save_strat = trainer_cfg.get("save_strategy", "epoch")

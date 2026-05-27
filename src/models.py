@@ -43,8 +43,13 @@ def load_causal_lm_model(
     model_name = model_cfg.get("model_name_or_path", None)
     if not model_name:
         raise ValueError("model_name_or_path must be specified in config")
-    dtype_str = model_cfg.get("model_dtype", "bfloat16")
-    dtype = getattr(torch, dtype_str) if hasattr(torch, dtype_str) else torch.float16
+    dtype_str = model_cfg.get("model_dtype", None)
+    if not dtype_str:
+        raise ValueError("model_dtype must be specified in config")
+    if hasattr(torch, dtype_str):
+        dtype = getattr(torch, dtype_str)
+    else:
+        raise ValueError(f"Invalid model_dtype '{dtype_str}' specified in config")
 
     try:
         tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
