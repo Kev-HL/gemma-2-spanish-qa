@@ -19,16 +19,11 @@ from cleaning import (
     filter_by_gemma2_tokenized_length,
     embed_sim_matrix,
 )
-from src.credentials import load_hf_credentials
-
-# Load Hugging Face access token from .env
-# (Assumes .env file with HF_TOKEN=hf_... exists on cwd)
-hf_token = load_hf_credentials()
 
 
 # Fixtures for tokenizers
 @pytest.fixture(scope="module")
-def tkn_mbert():
+def tkn_mbert(hf_token):
     """Load mBERT tokenizer once per module"""
     return AutoTokenizer.from_pretrained(
         "bert-base-multilingual-cased",
@@ -37,7 +32,7 @@ def tkn_mbert():
 
 
 @pytest.fixture(scope="module")
-def tkn_gemma2():
+def tkn_gemma2(hf_token):
     """Load Gemma2 tokenizer once per module"""
     return AutoTokenizer.from_pretrained(
         "google/gemma-2-2b", token=hf_token  # Gated access, token required
