@@ -23,7 +23,7 @@ from cleaning import (
 
 # Fixtures for tokenizers
 @pytest.fixture(scope="module")
-def tkn_mbert(hf_token):
+def tkn_mbert(hf_token: str) -> AutoTokenizer:
     """Load mBERT tokenizer once per module"""
     return AutoTokenizer.from_pretrained(
         "bert-base-multilingual-cased",
@@ -32,7 +32,7 @@ def tkn_mbert(hf_token):
 
 
 @pytest.fixture(scope="module")
-def tkn_gemma2(hf_token):
+def tkn_gemma2(hf_token: str) -> AutoTokenizer:
     """Load Gemma2 tokenizer once per module"""
     return AutoTokenizer.from_pretrained(
         "google/gemma-2-2b", token=hf_token  # Gated access, token required
@@ -40,7 +40,7 @@ def tkn_gemma2(hf_token):
 
 
 @pytest.fixture(params=["tkn_mbert", "tkn_gemma2"])
-def tokenizer(request):
+def tokenizer(request: pytest.FixtureRequest) -> AutoTokenizer:
     """Provides both tokenizers parametrized."""
     return request.getfixturevalue(request.param)
 
@@ -49,19 +49,19 @@ def tokenizer(request):
 class TestFactoryNoTokens:
     """Tests for factory_no_tokens function using real tokenizers"""
 
-    def test_valid_string(self, tokenizer):
+    def test_valid_string(self, tokenizer: AutoTokenizer) -> None:
         """Test that the check returns False with some random valid string."""
         no_tokens_fn = factory_no_tokens(tokenizer)
         result = no_tokens_fn("some input text")
         assert not result  # False
 
-    def test_empty_string(self, tokenizer):
+    def test_empty_string(self, tokenizer: AutoTokenizer) -> None:
         """Test that the check returns True with an empty string."""
         no_tokens_fn = factory_no_tokens(tokenizer)
         result = no_tokens_fn("")
         assert result  # True
 
-    def test_whitespace(self, tokenizer):
+    def test_whitespace(self, tokenizer: AutoTokenizer) -> None:
         """Test that the check returns True with a string of only whitespace."""
         # Function strips the string, so tokenizer receives empty string
         no_tokens_fn = factory_no_tokens(tokenizer)
@@ -73,13 +73,13 @@ class TestFactoryNoTokens:
 class TestFactoryUnkTokens:
     """Tests for factory_unk_tokens function using real tokenizers"""
 
-    def test_valid_string(self, tokenizer):
+    def test_valid_string(self, tokenizer: AutoTokenizer) -> None:
         """Test that the check returns False with some random valid string."""
         unk_tokens_fn = factory_unk_tokens(tokenizer)
         result = unk_tokens_fn("some input text")
         assert not result  # False
 
-    def test_string_with_unk_token(self, tokenizer):
+    def test_string_with_unk_token(self, tokenizer: AutoTokenizer) -> None:
         """
         Test that the check returns True with a string with a UNK token.
 
@@ -92,13 +92,13 @@ class TestFactoryUnkTokens:
         result = unk_tokens_fn(f"This is an {tokenizer.unk_token} token")
         assert result  # True
 
-    def test_empty_string(self, tokenizer):
+    def test_empty_string(self, tokenizer: AutoTokenizer) -> None:
         """Test that the check returns False with an empty string."""
         unk_tokens_fn = factory_unk_tokens(tokenizer)
         result = unk_tokens_fn("")
         assert not result  # False
 
-    def test_whitespace(self, tokenizer):
+    def test_whitespace(self, tokenizer: AutoTokenizer) -> None:
         """Test that the check returns False with a string of only whitespace."""
         # Function strips the string, so tokenizer receives empty string
         unk_tokens_fn = factory_unk_tokens(tokenizer)
@@ -110,7 +110,9 @@ class TestFactoryUnkTokens:
 class TestCheckMbertInputTruncation:
     """Tests for check_mbert_input_truncation function using a real tokenizer"""
 
-    def test_basic_case(self, capsys, tkn_mbert):
+    def test_basic_case(
+        self, capsys: pytest.CaptureFixture, tkn_mbert: AutoTokenizer
+    ) -> None:
         """
         Test that the function correctly identifies rows that would be truncated.
 
@@ -154,7 +156,9 @@ class TestCheckMbertInputTruncation:
 class TestCheckGemma2InputTruncation:
     """Tests for check_gemma2_input_truncation function using a real tokenizer"""
 
-    def test_basic_case(self, capsys, tkn_gemma2):
+    def test_basic_case(
+        self, capsys: pytest.CaptureFixture, tkn_gemma2: AutoTokenizer
+    ) -> None:
         """
         Test that the function correctly identifies rows that would be truncated.
 
@@ -216,7 +220,7 @@ class TestCheckGemma2InputTruncation:
 class TestFilterByGemma2TokenizedLength:
     """Tests for filter_by_gemma2_tokenized_length function using a real tokenizer"""
 
-    def test_basic_case(self, tkn_gemma2):
+    def test_basic_case(self, tkn_gemma2: AutoTokenizer) -> None:
         """
         Test filtering with real Gemma2 tokenizer.
         Verifies that rows over the tokenized length limit are removed, and rows at or
@@ -264,11 +268,11 @@ class TestEmbedSimMatrix:
     """Tests for embed_sim_matrix function using a real SentenceTransformer"""
 
     @pytest.fixture(scope="class")
-    def embed_model(self):
+    def embed_model(self) -> SentenceTransformer:
         """Load SentenceTransformer model once per class"""
         return SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
 
-    def test_basic_case(self, embed_model):
+    def test_basic_case(self, embed_model: SentenceTransformer) -> None:
         """Test with real model: identical sentences should have high similarity."""
         sentences_a = ["This is a test.", "This is one test."]
         sentences_b = ["This is a test.", "hello world"]

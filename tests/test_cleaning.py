@@ -28,7 +28,7 @@ from cleaning import (
 class TestExplodeAnswersDict:
     """Tests for explode_answers_dict function"""
 
-    def test_basic_case(self):
+    def test_basic_case(self) -> None:
         """Test normal operation with expected input format"""
         # Create sample dataframe with expected format
         df = pd.DataFrame(
@@ -60,7 +60,7 @@ class TestExplodeAnswersDict:
 class TestExplodeAnswersLists:
     """Tests for explode_answers_lists function"""
 
-    def test_basic_case(self):
+    def test_basic_case(self) -> None:
         """Test normal operation with expected input format"""
         # Create sample dataframe with expected format
         df = pd.DataFrame(
@@ -86,7 +86,9 @@ class TestExplodeAnswersLists:
         assert result.iloc[2]["answer_start"] == 5
         assert result.iloc[2]["text"] == "baz"
 
-    def test_empty_answers_dropped_with_warning(self, caplog):
+    def test_empty_answers_dropped_with_warning(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Test that rows with empty answer lists are dropped with warning"""
         df = pd.DataFrame(
             {
@@ -109,7 +111,7 @@ class TestExplodeAnswersLists:
         assert result.iloc[2]["answer_start"] == 5
         assert "Dropped 1 rows with empty answer lists after explode." in caplog.text
 
-    def test_mismatch_lengths_error(self):
+    def test_mismatch_lengths_error(self) -> None:
         """Test that mismatched list lengths raise ValueError"""
         df = pd.DataFrame(
             {"answer_start": [[10, 20]], "text": [["foo"]]}  # Length mismatch
@@ -122,7 +124,7 @@ class TestExplodeAnswersLists:
 class TestUnexplodeAnswers:
     """Tests for unexplode_answers function"""
 
-    def test_basic_case(self):
+    def test_basic_case(self) -> None:
         """Test normal operation with expected input format"""
         df = pd.DataFrame(
             {
@@ -145,7 +147,7 @@ class TestUnexplodeAnswers:
         assert result.iloc[1]["answers"]["text"] == ["baz"]
         assert list(result.index) == [0, 1]  # groupby method should reset index
 
-    def test_extra_columns_dropped(self):
+    def test_extra_columns_dropped(self) -> None:
         """Test that extra columns are dropped and not affect grouping"""
         df = pd.DataFrame(
             {
@@ -163,7 +165,7 @@ class TestUnexplodeAnswers:
         assert len(result) == 1
         assert "extra_col" not in result.columns
 
-    def test_explode_unexplode(self):
+    def test_explode_unexplode(self) -> None:
         """Test that explode then unexplode returns to original structure and content"""
         original = pd.DataFrame(
             {
@@ -193,12 +195,12 @@ class TestUnexplodeAnswers:
 class TestIsAnswerInContext:
     """Tests for is_answer_in_context function"""
 
-    def test_answer_at_start(self):
+    def test_answer_at_start(self) -> None:
         """Test answer at start of context"""
         row = pd.Series({"context": "hello world", "text": "hello", "answer_start": 0})
         assert is_answer_in_context(row) is True
 
-    def test_answer_in_middle(self):
+    def test_answer_in_middle(self) -> None:
         """Test answer in middle of context"""
         # Note that end of context would be the same case (literal substring match).
         row = pd.Series(
@@ -206,24 +208,24 @@ class TestIsAnswerInContext:
         )
         assert is_answer_in_context(row) is True
 
-    def test_answer_is_full_context(self):
+    def test_answer_is_full_context(self) -> None:
         """Test answer is the entire context"""
         row = pd.Series(
             {"context": "hello world", "text": "hello world", "answer_start": 0}
         )
         assert is_answer_in_context(row) is True
 
-    def test_case_sensitivity(self):
+    def test_case_sensitivity(self) -> None:
         """Test that matching is case-sensitive"""
         row = pd.Series({"context": "Hello world", "text": "hello", "answer_start": 0})
         assert is_answer_in_context(row) is False
 
-    def test_answer_out_of_bounds(self):
+    def test_answer_out_of_bounds(self) -> None:
         """Test answer extending beyond context"""
         row = pd.Series({"context": "hello", "text": "hello world", "answer_start": 0})
         assert is_answer_in_context(row) is False
 
-    def test_negative_start(self):
+    def test_negative_start(self) -> None:
         """Test negative answer_start"""
         row = pd.Series({"context": "hello", "text": "hello", "answer_start": -1})
         assert is_answer_in_context(row) is False
@@ -232,7 +234,7 @@ class TestIsAnswerInContext:
 class TestFactoryNoTokens:
     """Tests for factory_no_tokens function using a mock tokenizer"""
 
-    def test_tokenizer_returns_empty_list(self):
+    def test_tokenizer_returns_empty_list(self) -> None:
         """Test that the check returns True if tokenizer returns an empty list."""
         # Create a mock tokenizer that always returns an empty list
         mock_tokenizer = Mock()
@@ -243,7 +245,7 @@ class TestFactoryNoTokens:
 
         assert result  # True
 
-    def test_tokenizer_returns_non_empty_list(self):
+    def test_tokenizer_returns_non_empty_list(self) -> None:
         """Test that the check returns False if tokenizer returns a non-empty list."""
         # Create a mock tokenizer that always returns a non-empty list
         mock_tokenizer = Mock()
@@ -254,7 +256,7 @@ class TestFactoryNoTokens:
 
         assert not result  # False
 
-    def test_whitespace_stripped_before_tokenizing(self):
+    def test_whitespace_stripped_before_tokenizing(self) -> None:
         """Test that whitespace is stripped before tokenizing"""
         mock_tokenizer = Mock()
         mock_tokenizer.tokenize.return_value = []
@@ -270,7 +272,7 @@ class TestFactoryNoTokens:
 class TestFactoryUnkTokens:
     """Tests for factory_unk_tokens function using a mock tokenizer"""
 
-    def test_tokenizer_returns_empty_list(self):
+    def test_tokenizer_returns_empty_list(self) -> None:
         """Test that the check returns True if tokenizer returns an empty list."""
         # Create a mock tokenizer that always returns an empty list
         mock_tokenizer = Mock()
@@ -281,7 +283,7 @@ class TestFactoryUnkTokens:
 
         assert not result  # False
 
-    def test_tokenizer_returns_only_valid_tokens(self):
+    def test_tokenizer_returns_only_valid_tokens(self) -> None:
         """Test that the check returns False if tokenizer returns only valid tokens."""
         # Create a mock tokenizer that always returns a non-empty list
         mock_tokenizer = Mock()
@@ -292,7 +294,7 @@ class TestFactoryUnkTokens:
 
         assert not result  # False
 
-    def test_tokenizer_returns_unk_tokens(self):
+    def test_tokenizer_returns_unk_tokens(self) -> None:
         """Test that the check returns True if tokenizer returns only unknown tokens."""
         # Create a mock tokenizer that always returns a list with a UNK token.
         mock_tokenizer = Mock()
@@ -304,7 +306,7 @@ class TestFactoryUnkTokens:
 
         assert result  # True
 
-    def test_whitespace_stripped_before_tokenizing(self):
+    def test_whitespace_stripped_before_tokenizing(self) -> None:
         """Test that whitespace is stripped before tokenizing"""
         mock_tokenizer = Mock()
         mock_tokenizer.tokenize.return_value = []
@@ -320,7 +322,7 @@ class TestFactoryUnkTokens:
 class TestCheckMbertInputTruncation:
     """Tests for check_mbert_input_truncation function using a mock tokenizer"""
 
-    def test_basic_case(self, capsys):
+    def test_basic_case(self, capsys: pytest.CaptureFixture) -> None:
         """Test that the function correctly identifies rows that would be truncated."""
         mock_tokenizer = Mock()
         mock_tokenizer.model_max_length = 5
@@ -348,7 +350,7 @@ class TestCheckMbertInputTruncation:
         assert "Sequence limit set at 5 tokens" in captured.out
         assert "Longest tokenized entry found is 8 tokens long" in captured.out
 
-    def test_correct_tokenizer_input(self):
+    def test_correct_tokenizer_input(self) -> None:
         """Test that the tokenizer receives the expected input format."""
         mock_tokenizer = Mock()
         mock_tokenizer.model_max_length = 5
@@ -368,7 +370,7 @@ class TestCheckMbertInputTruncation:
 class TestCheckGemma2InputTruncation:
     """Tests for check_gemma2_input_truncation function using a mock tokenizer"""
 
-    def test_basic_case(self, capsys):
+    def test_basic_case(self, capsys: pytest.CaptureFixture) -> None:
         """Test that the function correctly identifies rows that would be truncated."""
         mock_tokenizer = Mock()
         mock_tokenizer.eos_token = "<eos>"
@@ -403,7 +405,7 @@ class TestCheckGemma2InputTruncation:
         assert "Sequence limit set at 5 tokens" in captured.out
         assert "Longest tokenized entry found is 8 tokens long" in captured.out
 
-    def test_empty_entry(self, capsys):
+    def test_empty_entry(self, capsys: pytest.CaptureFixture) -> None:
         """Test that the function correctly handles an empty entry."""
         mock_tokenizer = Mock()
         mock_tokenizer.eos_token = "<eos>"
@@ -424,7 +426,7 @@ class TestCheckGemma2InputTruncation:
         assert "Sequence limit set at 5 tokens" in captured.out
         assert "Longest tokenized entry found is 0 tokens long" in captured.out
 
-    def test_correct_tokenizer_input(self):
+    def test_correct_tokenizer_input(self) -> None:
         """Test that the tokenizer receives the expected input format."""
         mock_tokenizer = Mock()
         mock_tokenizer.eos_token = "<eos>"
@@ -447,7 +449,7 @@ class TestCheckGemma2InputTruncation:
 class TestFilterByGemma2TokenizedLength:
     """Tests for filter_by_gemma2_tokenized_length function using a mock tokenizer"""
 
-    def test_basic_case(self):
+    def test_basic_case(self) -> None:
         """Test that the function correctly filters out rows that would be truncated."""
         mock_tokenizer = Mock()
         mock_tokenizer.eos_token = "<eos>"
@@ -481,7 +483,7 @@ class TestFilterByGemma2TokenizedLength:
         assert filter_df.iloc[0]["question"] == "q1?"
         assert filter_df.iloc[1]["question"] == "q3?"
 
-    def test_correct_tokenizer_input(self):
+    def test_correct_tokenizer_input(self) -> None:
         """Test that the tokenizer receives the expected input format."""
         mock_tokenizer = Mock()
         mock_tokenizer.eos_token = "<eos>"
@@ -504,7 +506,7 @@ class TestFilterByGemma2TokenizedLength:
 class TestEmbedSimMatrix:
     """Tests for embed_sim_matrix function using a mock embedding model"""
 
-    def test_basic_case(self):
+    def test_basic_case(self) -> None:
         """Test that the function returns a similarity matrix of the correct shape."""
         mock_model = Mock()
         # Mock encode to return fixed-size embeddings

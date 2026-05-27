@@ -1,5 +1,8 @@
 """Unit tests for some of the config.py functions, located in src/config.py"""
 
+# Standard imports
+from pathlib import Path
+
 # Third-party imports
 import pytest
 
@@ -10,7 +13,7 @@ from config import load_training_config
 class TestLoadTrainingConfig:
     """Unit tests for load_training_config"""
 
-    def test_valid_mbert_cfg(self):
+    def test_valid_mbert_cfg(self) -> None:
         """
         Test that load_training_config correctly loads a valid mBERT config file.
         """
@@ -19,7 +22,7 @@ class TestLoadTrainingConfig:
         cfg_path = "configs/schemas/train_mbert.json"
         _ = load_training_config(cfg_path, "mbert")
 
-    def test_valid_gemma2_cfg(self):
+    def test_valid_gemma2_cfg(self) -> None:
         """
         Test that load_training_config correctly loads a valid Gemma 2 config file.
         """
@@ -28,7 +31,7 @@ class TestLoadTrainingConfig:
         cfg_path = "configs/schemas/train_gemma2.json"
         _ = load_training_config(cfg_path, "gemma2")
 
-    def test_invalid_cfg_type(self):
+    def test_invalid_cfg_type(self) -> None:
         """
         Test that load_training_config raises a ValueError with an unsupported cfg_type.
         """
@@ -36,7 +39,7 @@ class TestLoadTrainingConfig:
         with pytest.raises(ValueError, match="Unsupported cfg_type"):
             load_training_config(cfg_path, "invalid")
 
-    def test_nonexistent_file(self):
+    def test_nonexistent_file(self) -> None:
         """
         Test that load_training_config raises a FileNotFoundError when the config file
         does not exist.
@@ -44,7 +47,7 @@ class TestLoadTrainingConfig:
         with pytest.raises(FileNotFoundError, match="Config file not found"):
             load_training_config("nonexistent_config.json", "mbert")
 
-    def test_invalid_json(self, tmp_path):
+    def test_invalid_json(self, tmp_path: Path) -> None:
         """
         Test that load_training_config raises a ValueError when the config file contains
         invalid JSON.

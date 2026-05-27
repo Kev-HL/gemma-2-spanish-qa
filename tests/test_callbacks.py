@@ -4,6 +4,9 @@
 import logging
 from unittest.mock import Mock, patch
 
+# Third-party imports
+import pytest
+
 # Local imports
 from callbacks import ClearCacheCallback, LogMetricsCallback
 
@@ -12,7 +15,9 @@ from callbacks import ClearCacheCallback, LogMetricsCallback
 class TestClearCacheCallback:
     """Unit tests for ClearCacheCallback"""
 
-    def test_on_evaluate_with_cuda_available(self, mock_torch, caplog):
+    def test_on_evaluate_with_cuda_available(
+        self, mock_torch: Mock, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """
         Test that on_evaluate with CUDA available calls torch.cuda.empty_cache and
         torch.cuda.reset_peak_memory_stats.
@@ -31,7 +36,9 @@ class TestClearCacheCallback:
         mock_torch.cuda.reset_peak_memory_stats.assert_called_once()
         assert "GPU cache cleared and peak memory stats reset" in caplog.text
 
-    def test_on_evaluate_with_cuda_not_available(self, mock_torch, caplog):
+    def test_on_evaluate_with_cuda_not_available(
+        self, mock_torch: Mock, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """
         Test that on_evaluate with CUDA not available does not call
         torch.cuda.empty_cache or torch.cuda.reset_peak_memory_stats.
@@ -56,7 +63,9 @@ class TestClearCacheCallback:
 class TestLogMetricsCallback:
     """Unit tests for LogMetricsCallback"""
 
-    def test_on_evaluate_with_wandb(self, mock_wandb, caplog):
+    def test_on_evaluate_with_wandb(
+        self, mock_wandb: Mock, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """
         Test that on_evaluate logs custom metrics to W&B, if W&B is initialized.
         """
@@ -93,7 +102,9 @@ class TestLogMetricsCallback:
         mock_wandb.log.assert_called_once_with(called_with_metrics)
         assert "Logged metrics to W&B at epoch 2" in caplog.text
 
-    def test_on_evaluate_without_wandb(self, mock_wandb, caplog):
+    def test_on_evaluate_without_wandb(
+        self, mock_wandb: Mock, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """
         Test that on_evaluate does not log metrics to W&B if W&B is not initialized.
         """

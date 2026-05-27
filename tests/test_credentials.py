@@ -15,7 +15,7 @@ from credentials import load_hf_credentials, load_wandb_credentials
 class TestLoadWandbCredentials:
     """Unit tests for load_wandb_credentials"""
 
-    def test_credentials_available(self, caplog):
+    def test_credentials_available(self, caplog: pytest.LogCaptureFixture) -> None:
         """Test that load_wandb_credentials successfully loads the API key."""
         with caplog.at_level(logging.INFO):
             with patch.dict(os.environ, {"WANDB_API_KEY": "test-token"}):
@@ -23,7 +23,7 @@ class TestLoadWandbCredentials:
         assert token == "test-token"
         assert "WandB API key loaded successfully." in caplog.text
 
-    def test_credentials_missing(self):
+    def test_credentials_missing(self) -> None:
         """Test that load_wandb_credentials raises ValueError when key is missing."""
         with patch.dict(os.environ, {}, clear=True):
             with pytest.raises(ValueError, match="WandB API key not found in env"):
@@ -33,7 +33,7 @@ class TestLoadWandbCredentials:
 class TestLoadHfCredentials:
     """Unit tests for load_hf_credentials"""
 
-    def test_credentials_available(self, caplog):
+    def test_credentials_available(self, caplog: pytest.LogCaptureFixture) -> None:
         """Test that load_hf_credentials successfully loads the HF token."""
         with caplog.at_level(logging.INFO):
             with patch.dict(os.environ, {"HF_TOKEN": "test-hf-token"}):
@@ -41,7 +41,7 @@ class TestLoadHfCredentials:
         assert token == "test-hf-token"
         assert "Hugging Face access token loaded successfully." in caplog.text
 
-    def test_credentials_missing(self):
+    def test_credentials_missing(self) -> None:
         """Test that load_hf_credentials raises ValueError when token is missing."""
         with patch.dict(os.environ, {}, clear=True):
             with pytest.raises(ValueError, match="Hugging Face access token not found"):
