@@ -9,7 +9,7 @@
         "eval_data_path": "data/squad_es/clean_dev-v1.1-es_small.json"
     },
     "model": {
-        "model_name": "bert-base-multilingual-cased",
+        "model_name_or_path": "bert-base-multilingual-cased",
         "gradient_checkpointing_enabled": true
     },
     "preprocessing": {

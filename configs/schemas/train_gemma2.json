@@ -9,7 +9,7 @@
         "eval_data_path": "data/squad_es/clean_dev-v1.1-es_small.json"
     },
     "model": {
-        "model_name": "google/gemma-2-2b",
+        "model_name_or_path": "google/gemma-2-2b",
         "model_dtype": "bfloat16",
         "device_map": "auto",
         "gradient_checkpointing_enabled": true
