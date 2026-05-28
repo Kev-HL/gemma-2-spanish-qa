@@ -1,18 +1,20 @@
 """Unit tests for some of the training.py functions, located in src/training.py"""
 
 # Standard imports
+import json
 import logging
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 # Third-party imports
 import pytest
+import torch
 from peft import LoraConfig
 from transformers import TrainingArguments
 from trl import SFTConfig
 
 # Local imports
 from training import load_SFTConfig, load_TrainingArguments, wrap_model_with_lora
-from config import load_training_config
 
 
 class TestLoadSFTConfig:
@@ -23,14 +25,21 @@ class TestLoadSFTConfig:
         Test that load_SFTConfig returns a SFTConfig object with custom values when
         a trainer config is provided.
 
-        The config file is loaded using the function provided in the config.py module.
-
         We use the training schema as input for a valid config
         Gemma 2 training schema can be found in configs/schemas/train_gemma2.json
         """
-        # Load config
-        cfg_path = "configs/schemas/train_gemma2.json"
-        cfg = load_training_config(cfg_path, "gemma2")
+        # Load config (absolute path to avoid issues with CI)
+        repo_root = Path(__file__).parent.parent
+        cfg_path = repo_root / "configs" / "schemas" / "train_gemma2.json"
+        with open(cfg_path) as f:
+            cfg = json.load(f)
+
+        # Override precision settings if CUDA not available to avoid issues with CI
+        if not torch.cuda.is_available():
+            cfg["trainer"]["bf16"] = False
+            cfg["trainer"]["fp16"] = False
+            cfg["trainer"]["bf16_full_eval"] = False
+            cfg["trainer"]["fp16_full_eval"] = False
 
         # Call the function under test
         with caplog.at_level(logging.INFO):
@@ -71,6 +80,13 @@ class TestLoadSFTConfig:
         """
         # Create empty config
         cfg = {}
+
+        # Override precision settings if CUDA not available to avoid issues with CI
+        if not torch.cuda.is_available():
+            cfg["trainer"]["bf16"] = False
+            cfg["trainer"]["fp16"] = False
+            cfg["trainer"]["bf16_full_eval"] = False
+            cfg["trainer"]["fp16_full_eval"] = False
 
         # Call the function under test
         sft_config = load_SFTConfig(cfg)
@@ -115,9 +131,18 @@ class TestLoadTrainingArguments:
         We use the training schema as input for a valid config
         mBERT training schema can be found in configs/schemas/train_mbert.json
         """
-        # Load config
-        cfg_path = "configs/schemas/train_mbert.json"
-        cfg = load_training_config(cfg_path, "mbert")
+        # Load config (absolute path to avoid issues with CI)
+        repo_root = Path(__file__).parent.parent
+        cfg_path = repo_root / "configs" / "schemas" / "train_mbert.json"
+        with open(cfg_path) as f:
+            cfg = json.load(f)
+
+        # Override precision settings if CUDA not available to avoid issues with CI
+        if not torch.cuda.is_available():
+            cfg["trainer"]["bf16"] = False
+            cfg["trainer"]["fp16"] = False
+            cfg["trainer"]["bf16_full_eval"] = False
+            cfg["trainer"]["fp16_full_eval"] = False
 
         # Call the function under test
         with caplog.at_level(logging.INFO):
@@ -158,6 +183,13 @@ class TestLoadTrainingArguments:
         """
         # Create empty config
         cfg = {}
+
+        # Override precision settings if CUDA not available to avoid issues with CI
+        if not torch.cuda.is_available():
+            cfg["trainer"]["bf16"] = False
+            cfg["trainer"]["fp16"] = False
+            cfg["trainer"]["bf16_full_eval"] = False
+            cfg["trainer"]["fp16_full_eval"] = False
 
         # Call the function under test
         training_args = load_TrainingArguments(cfg)
