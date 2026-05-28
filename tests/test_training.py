@@ -59,9 +59,15 @@ class TestLoadSFTConfig:
         assert sft_config.warmup_steps == 96
         assert sft_config.weight_decay == 0.01
         assert sft_config.max_grad_norm == 1.0
-        assert sft_config.bf16 is True
+        if torch.cuda.is_available():
+            assert sft_config.bf16 is True
+        else:
+            assert sft_config.bf16 is False
         assert sft_config.fp16 is False
-        assert sft_config.bf16_full_eval is True
+        if torch.cuda.is_available():
+            assert sft_config.bf16_full_eval is True
+        else:
+            assert sft_config.bf16_full_eval is False
         assert sft_config.fp16_full_eval is False
         assert sft_config.torch_compile is True
         assert sft_config.eval_strategy == "epoch"
@@ -83,6 +89,7 @@ class TestLoadSFTConfig:
 
         # Override precision settings if CUDA not available to avoid issues with CI
         if not torch.cuda.is_available():
+            cfg["trainer"] = {}
             cfg["trainer"]["bf16"] = False
             cfg["trainer"]["fp16"] = False
             cfg["trainer"]["bf16_full_eval"] = False
@@ -103,9 +110,15 @@ class TestLoadSFTConfig:
         assert sft_config.warmup_steps == 0
         assert sft_config.weight_decay == 0.01
         assert sft_config.max_grad_norm == 1.0
-        assert sft_config.bf16 is True
+        if torch.cuda.is_available():
+            assert sft_config.bf16 is True
+        else:
+            assert sft_config.bf16 is False
         assert sft_config.fp16 is False
-        assert sft_config.bf16_full_eval is True
+        if torch.cuda.is_available():
+            assert sft_config.bf16_full_eval is True
+        else:
+            assert sft_config.bf16_full_eval is False
         assert sft_config.fp16_full_eval is False
         assert sft_config.torch_compile is True
         assert sft_config.eval_strategy == "epoch"
@@ -186,6 +199,7 @@ class TestLoadTrainingArguments:
 
         # Override precision settings if CUDA not available to avoid issues with CI
         if not torch.cuda.is_available():
+            cfg["trainer"] = {}
             cfg["trainer"]["bf16"] = False
             cfg["trainer"]["fp16"] = False
             cfg["trainer"]["bf16_full_eval"] = False
@@ -206,9 +220,15 @@ class TestLoadTrainingArguments:
         assert training_args.warmup_steps == 0
         assert training_args.weight_decay == 0.01
         assert training_args.max_grad_norm == 1.0
-        assert training_args.bf16 is True
+        if torch.cuda.is_available():
+            assert training_args.bf16 is True
+        else:
+            assert training_args.bf16 is False
         assert training_args.fp16 is False
-        assert training_args.bf16_full_eval is True
+        if torch.cuda.is_available():
+            assert training_args.bf16_full_eval is True
+        else:
+            assert training_args.bf16_full_eval is False
         assert training_args.fp16_full_eval is False
         assert training_args.torch_compile is True
         assert training_args.eval_strategy == "epoch"
