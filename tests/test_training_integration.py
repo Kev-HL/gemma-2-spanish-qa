@@ -16,7 +16,7 @@ from config import load_training_config
 from models import load_causal_lm_model
 from training import wrap_model_with_lora
 
-
+@pytest.mark.integration
 class TestWrapModelWithLora:
     """Unit tests for the wrap_model_with_lora function"""
 
