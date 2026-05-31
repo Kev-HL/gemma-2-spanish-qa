@@ -186,9 +186,6 @@ def factory_compute_metrics_gemma2(
         """
         # Get predictions from Trainer
         encoded_preds, labels = eval_preds
-        encoded_preds = (
-            encoded_preds.copy()
-        )  # avoid modifying the original predictions in-place
 
         # Mask out prompt and padding tokens in the predictions with
         # tokenizer.pad_token_id, so that they are ignored when decoding
