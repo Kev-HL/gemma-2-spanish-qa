@@ -217,16 +217,11 @@ def validate_eval_config(cfg: Dict[str, Any]) -> None:
             raise ValueError(f"Missing required section: {section}")
 
     # ======== MODEL, DATA AND OUTPUT PATHS ========
-    # Data paths must exist and files must be JSON
-    model_path = Path(cfg["model"]["model_name_or_path"])
-    if not model_path.exists():
-        raise ValueError(f"Path not found: {model_path}")
-    if not model_path.is_dir():
-        raise ValueError(f"{model_path} must be a directory containing model files")
-    model_exists = (model_path / "model.safetensors").exists()
-    adapter_exists = (model_path / "adapter_model.safetensors").exists()
-    if not (model_exists or adapter_exists):
-        raise FileNotFoundError("Model or adapter .safetensors file not found")
+    # Model path must be a non-empty string (can be local directory or Hugging Face Hub)
+    model_path = cfg["model"]["model_name_or_path"]
+    if not isinstance(model_path, str) or not model_path.strip():
+        raise ValueError(f"Invalid model path: {model_path}")
+    # Data path must exist and files must be JSON
     eval_path = Path(cfg["data"]["eval_data_path"])
     if not eval_path.exists():
         raise FileNotFoundError(f"Eval data not found: {eval_path}")
