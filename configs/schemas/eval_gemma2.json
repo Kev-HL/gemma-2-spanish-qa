@@ -1,0 +1,26 @@
+{
+    "experiment": {
+        "team_name": "kev-hl-personal-team",
+        "project_name": "spanish-qa-gemma2",
+        "experiment_name": "eval_rank_64_lr_3e5"
+    },
+    "data": {
+        "eval_data_path": "data/squad_es/clean_dev-v1.1-es_small.json"
+    },
+    "model": {
+        "model_name_or_path": "artifacts/test_experiment/checkpoint-123",
+        "model_dtype": "bfloat16"
+    },
+    "preprocessing": {
+        "max_seq_length": 512,
+        "batched": true
+    },
+    "trainer": {
+        "output_dir": "./artifacts",
+        "per_device_eval_batch_size": 4,
+        "eval_strategy": "epoch",
+        "report_to": "wandb",
+        "logging_steps": 10,
+        "logging_first_step": true
+    }
+}

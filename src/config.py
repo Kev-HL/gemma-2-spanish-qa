@@ -164,3 +164,92 @@ def load_training_config(path: str, cfg_type: str) -> Dict[str, Any]:
     logger.info(f"Config validation passed for {cfg_type}")
 
     return cfg
+
+
+def load_eval_config(path: str) -> Dict[str, Any]:
+    """
+    Loads and validates evaluation configuration.
+
+    Valid schema can be found in:
+    - configs/schemas/evaluation.json
+
+    Args:
+        path: The path to the evaluation configuration file to validate
+    Returns:
+        A validated evaluation configuration dictionary ready for use
+    """
+    config_path = Path(path)
+    if not config_path.exists():
+        raise FileNotFoundError(f"Config file not found: {path}")
+    if not config_path.suffix == ".json":
+        raise ValueError("Config file must be a JSON file")
+
+    try:
+        with open(config_path) as f:
+            cfg = json.load(f)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in config file: {e}")
+    logger.info(f"Loaded evaluation config from {path}")
+
+    validate_eval_config(cfg)
+    logger.info("Evaluation config validation passed.")
+
+    return cfg
+
+
+def validate_eval_config(cfg: Dict[str, Any]) -> None:
+    """
+    Validate critical aspects of the evaluation configuration to catch common issues.
+    Validates:
+    - Basic required sections existence
+    - Valid paths for data and output
+
+    Valid schema can be found in:
+    - configs/schemas/evaluation.json
+
+    Args:
+        cfg: The configuration dictionary to validate
+    """
+    # ======== REQUIRED SECTIONS ========
+    required_sections = ["data", "model", "preprocessing", "trainer"]
+    for section in required_sections:
+        if section not in cfg:
+            raise ValueError(f"Missing required section: {section}")
+
+    # ======== MODEL, DATA AND OUTPUT PATHS ========
+    # Data paths must exist and files must be JSON
+    model_path = Path(cfg["model"]["model_name_or_path"])
+    if not model_path.exists():
+        raise ValueError(f"Path not found: {model_path}")
+    if not model_path.is_dir():
+        raise ValueError(f"{model_path} must be a directory containing model files")
+    model_exists = (model_path / "model.safetensors").exists()
+    adapter_exists = (model_path / "adapter_model.safetensors").exists()
+    if not (model_exists or adapter_exists):
+        raise FileNotFoundError("Model or adapter .safetensors file not found")
+    eval_path = Path(cfg["data"]["eval_data_path"])
+    if not eval_path.exists():
+        raise FileNotFoundError(f"Eval data not found: {eval_path}")
+    if not eval_path.suffix == ".json":
+        raise ValueError("Eval data file must be a JSON file")
+    # Output dir must be accessible (will be created if it doesn't exist)
+    output_dir = Path(cfg["trainer"]["output_dir"])
+    output_dir.parent.mkdir(parents=True, exist_ok=True)
+    logger.info(f"Model and data paths validated: {model_path}, {eval_path}")
+
+    # ======== LOGIC AND INTERDEPENDENCIES ========
+    trainer_cfg = cfg["trainer"]
+    # W&B experiment config validation
+    if trainer_cfg.get("report_to") == "wandb":
+        if "experiment" not in cfg:
+            raise ValueError(
+                "Experiment config required in cfg when report_to='wandb'. "
+                "Add 'experiment' section with team_name, project_name, experiment_name"
+            )
+        logger.info("W&B reporting enabled and experiment config validated")
+
+    # ======== REASONABLE VALUE CHECKS ========
+    # Batch size shouldn't be absurdly large
+    batch_size = trainer_cfg.get("per_device_eval_batch_size", 8)
+    if batch_size > 512:
+        logger.warning(f"Batch size {batch_size} is very large, may cause OOM")
