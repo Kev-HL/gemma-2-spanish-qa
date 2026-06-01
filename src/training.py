@@ -22,9 +22,12 @@ def load_SFTConfig(cfg: dict) -> SFTConfig:
     - cfg: Configuration dictionary containing trainer settings
 
     Returns:
-    - SFTConfig object with specified training parameters for use with SFTTRainer
+    - SFTConfig object with specified training parameters for use with SFTTrainer
     """
     trainer_cfg = cfg.get("trainer", {})
+    kwargs = {}
+    if trainer_cfg.get("eval_strategy") == "steps":
+        kwargs["eval_steps"] = trainer_cfg.get("eval_steps", 100)
     training_args = SFTConfig(
         # Output dir
         output_dir=trainer_cfg.get("output_dir", "./artifacts"),
@@ -58,6 +61,8 @@ def load_SFTConfig(cfg: dict) -> SFTConfig:
         logging_first_step=trainer_cfg.get("logging_first_step", True),
         # SFT-specific settings
         dataset_kwargs={"skip_prepare_dataset": True},  # tokenization handled manually
+        # Conditional kwargs for eval strategy
+        **kwargs
     )
     logger.info("SFTConfig created successfully.")
     return training_args
@@ -74,6 +79,9 @@ def load_TrainingArguments(cfg: dict) -> TrainingArguments:
     - TrainingArguments object with specified training parameters for use with Trainer
     """
     trainer_cfg = cfg.get("trainer", {})
+    kwargs = {}
+    if trainer_cfg.get("eval_strategy") == "steps":
+        kwargs["eval_steps"] = trainer_cfg.get("eval_steps", 100)
     training_args = TrainingArguments(
         # Output dir
         output_dir=trainer_cfg.get("output_dir", "./artifacts"),
@@ -105,6 +113,8 @@ def load_TrainingArguments(cfg: dict) -> TrainingArguments:
         report_to=trainer_cfg.get("report_to", "none"),
         logging_steps=trainer_cfg.get("logging_steps", 10),
         logging_first_step=trainer_cfg.get("logging_first_step", True),
+        # Conditional kwargs for eval strategy
+        **kwargs
     )
     logger.info("TrainingArguments created successfully.")
     return training_args
