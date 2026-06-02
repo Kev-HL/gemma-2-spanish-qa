@@ -55,7 +55,7 @@ class TestLoadSFTConfig:
         assert sft_config.per_device_eval_batch_size == 1
         assert sft_config.learning_rate == 3e-5
         assert sft_config.optim == "adamw_torch_fused"
-        assert sft_config.lr_scheduler_type == "linear"
+        assert sft_config.lr_scheduler_type == "cosine"
         assert sft_config.warmup_steps == 96
         assert sft_config.weight_decay == 0.01
         assert sft_config.max_grad_norm == 1.0
@@ -106,7 +106,7 @@ class TestLoadSFTConfig:
         assert sft_config.per_device_eval_batch_size == 4
         assert sft_config.learning_rate == 3e-5
         assert sft_config.optim == "adamw_torch_fused"
-        assert sft_config.lr_scheduler_type == "linear"
+        assert sft_config.lr_scheduler_type == "cosine"
         assert sft_config.warmup_steps == 0
         assert sft_config.weight_decay == 0.01
         assert sft_config.max_grad_norm == 1.0
@@ -171,7 +171,7 @@ class TestLoadTrainingArguments:
         assert training_args.per_device_eval_batch_size == 64
         assert training_args.learning_rate == 3e-5
         assert training_args.optim == "adamw_torch_fused"
-        assert training_args.lr_scheduler_type == "linear"
+        assert training_args.lr_scheduler_type == "cosine"
         assert training_args.warmup_steps == 36
         assert training_args.weight_decay == 0.01
         assert training_args.max_grad_norm == 1.0
@@ -216,7 +216,7 @@ class TestLoadTrainingArguments:
         assert training_args.per_device_eval_batch_size == 32
         assert training_args.learning_rate == 3e-5
         assert training_args.optim == "adamw_torch_fused"
-        assert training_args.lr_scheduler_type == "linear"
+        assert training_args.lr_scheduler_type == "cosine"
         assert training_args.warmup_steps == 0
         assert training_args.weight_decay == 0.01
         assert training_args.max_grad_norm == 1.0

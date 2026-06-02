@@ -1,7 +1,7 @@
 {
     "experiment": {
         "team_name": "kev-hl-personal-team",
-        "project_name": "spanish-qa-gemma2",
+        "project_name": "gemma-2-spanish-qa",
         "experiment_name": "mbert_baseline"
     },
     "data": {
@@ -24,7 +24,7 @@
         "per_device_eval_batch_size": 64,
         "learning_rate": 3e-5,
         "optim": "adamw_torch_fused",
-        "lr_scheduler_type": "linear",
+        "lr_scheduler_type": "cosine",
         "warmup_steps": 36,
         "weight_decay": 0.01,
         "max_grad_norm": 1.0,

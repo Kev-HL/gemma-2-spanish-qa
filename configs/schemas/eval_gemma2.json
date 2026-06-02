@@ -1,7 +1,7 @@
 {
     "experiment": {
         "team_name": "kev-hl-personal-team",
-        "project_name": "spanish-qa-gemma2",
+        "project_name": "gemma-2-spanish-qa",
         "experiment_name": "eval_rank_64_lr_3e5"
     },
     "data": {
