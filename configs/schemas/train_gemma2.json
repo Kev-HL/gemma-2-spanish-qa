@@ -2,7 +2,7 @@
     "experiment": {
         "team_name": "kev-hl-personal-team",
         "project_name": "gemma-2-spanish-qa",
-        "experiment_name": "rank_64_lr_3e5"
+        "experiment_name": "rank_16_lr_3e5"
     },
     "data": {
         "train_data_path": "data/squad_es/clean_train-v1.1-es_small.json",
@@ -19,10 +19,11 @@
         "batched": true
     },
     "lora": {
-        "r": 64,
-        "alpha": 32,
+        "r": 16,
+        "alpha": 16,
         "dropout": 0.1,
-        "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj"]
+        "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj"],
+        "use_rslora": false
     },
     "trainer": {
         "output_dir": "./artifacts",

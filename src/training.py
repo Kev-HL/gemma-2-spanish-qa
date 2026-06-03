@@ -140,6 +140,7 @@ def wrap_model_with_lora(model: PreTrainedModel, cfg: dict) -> PeftModel:
         ),
         lora_dropout=lora_cfg.get("dropout", 0.1),
         task_type="CAUSAL_LM",
+        use_rslora=lora_cfg.get("use_rslora", False),
     )
     try:
         model = get_peft_model(model, lora_config)
