@@ -62,7 +62,7 @@ def load_SFTConfig(cfg: dict) -> SFTConfig:
         # SFT-specific settings
         dataset_kwargs={"skip_prepare_dataset": True},  # tokenization handled manually
         # Conditional kwargs for eval strategy
-        **kwargs
+        **kwargs,
     )
     logger.info("SFTConfig created successfully.")
     return training_args
@@ -114,7 +114,7 @@ def load_TrainingArguments(cfg: dict) -> TrainingArguments:
         logging_steps=trainer_cfg.get("logging_steps", 10),
         logging_first_step=trainer_cfg.get("logging_first_step", True),
         # Conditional kwargs for eval strategy
-        **kwargs
+        **kwargs,
     )
     logger.info("TrainingArguments created successfully.")
     return training_args
