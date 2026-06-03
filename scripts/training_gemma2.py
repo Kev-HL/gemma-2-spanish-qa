@@ -82,6 +82,7 @@ def main(config_path: str) -> None:
             entity=experiment_cfg.get("team_name", "test"),
             project=experiment_cfg.get("project_name", "test"),
             name=experiment_cfg.get("experiment_name", "test"),
+            tags=experiment_cfg.get("tags", []),
             config=cfg,  # Log config to W&B
         )
         logger.info("W&B initialized")

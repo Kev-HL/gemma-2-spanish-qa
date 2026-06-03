@@ -2,7 +2,8 @@
     "experiment": {
         "team_name": "kev-hl-personal-team",
         "project_name": "gemma-2-spanish-qa",
-        "experiment_name": "eval_mbert_baseline"
+        "experiment_name": "eval_mbert_baseline",
+        "tags": ["mbert", "eval", "test", "baseline"]
     },
     "data": {
         "eval_data_path": "data/squad_es/clean_dev-v1.1-es_small.json"
