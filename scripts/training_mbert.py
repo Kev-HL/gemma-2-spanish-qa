@@ -173,6 +173,7 @@ def main(config_path: str) -> None:
     logger.info("Starting training...")
     try:
         # Train the model
+        torch.cuda.empty_cache()
         trainer.train()
         logger.info("Training completed successfully")
     except Exception as e:

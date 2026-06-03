@@ -155,6 +155,7 @@ def main(config_path: str) -> None:
     logger.info("Starting evaluation...")
     try:
         # Evaluate the model
+        torch.cuda.empty_cache()
         results = trainer.evaluate()
         logger.info("Evaluation completed successfully.")
         logger.info(f"Dataset: {cfg['data']['eval_data_path']}")

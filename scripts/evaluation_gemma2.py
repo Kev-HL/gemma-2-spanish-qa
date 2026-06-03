@@ -147,11 +147,24 @@ def main(config_path: str) -> None:
     compute_metrics = factory_compute_metrics_gemma2(eval_dataset, tokenizer)
 
     # Set up Trainer for evaluation
+    model_dtype = cfg["model"].get("model_dtype", "")
+    if "bfloat16" in model_dtype:
+        bf16_full_eval = True
+        fp16_full_eval = False
+    elif "float16" in model_dtype:
+        bf16_full_eval = False
+        fp16_full_eval = True
+    else:
+        bf16_full_eval = False
+        fp16_full_eval = False
+    logger.info(f"bf16_full_eval={bf16_full_eval}, fp16_full_eval={fp16_full_eval}")
     trainer = Trainer(
         model=model,
         args=TrainingArguments(
             output_dir=cfg["trainer"]["output_dir"],
             per_device_eval_batch_size=cfg["trainer"]["per_device_eval_batch_size"],
+            bf16_full_eval=bf16_full_eval,
+            fp16_full_eval=fp16_full_eval,
             report_to=cfg["trainer"]["report_to"],
         ),
         eval_dataset=tokenized_eval_dataset,
@@ -164,6 +177,7 @@ def main(config_path: str) -> None:
     logger.info("Starting evaluation...")
     try:
         # Evaluate the model
+        torch.cuda.empty_cache()
         results = trainer.evaluate()
         logger.info("Evaluation completed successfully.")
         logger.info(f"Dataset: {cfg['data']['eval_data_path']}")
