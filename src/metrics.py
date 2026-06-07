@@ -15,6 +15,7 @@ import evaluate
 import numpy as np
 import torch
 from datasets import Dataset
+from rapidfuzz.fuzz import partial_ratio_alignment
 from transformers import AutoTokenizer, EvalPrediction
 
 # Set up logger
@@ -153,11 +154,14 @@ def factory_compute_metrics_mbert(
 
 
 def factory_compute_metrics_gemma2(
-    raw_dataset: Dataset, tokenizer: AutoTokenizer
+    raw_dataset: Dataset, tokenizer: AutoTokenizer, fuzzy_threshold: int = 100
 ) -> Callable[[EvalPrediction], dict[str, float]]:
     """
     Factory function to create a compute_metrics function for causal LMs.
     Intended to be used with Gemma 2, but could be adapted for other similar models.
+
+    Fuzzy matching is disabled by default, but can be enabled by setting a
+    threshold < 100.
 
     Computes F1 and Exact Match metrics for SQuAD style QA.
 
@@ -193,6 +197,15 @@ def factory_compute_metrics_gemma2(
 
         # Decode answers
         decoded_preds = tokenizer.batch_decode(encoded_preds, skip_special_tokens=True)
+
+        # Ground predictions to context using fuzzy matching
+        if fuzzy_threshold < 100:
+            for i in range(len(decoded_preds)):
+                decoded_preds[i] = ground_prediction_to_context(
+                    decoded_preds[i],
+                    raw_dataset[i]["context"],
+                    threshold=fuzzy_threshold,
+                )
 
         # Build predictions in SQuAD format using dataset order
         # [{'id': ..., 'prediction_text': ...}, ...]
@@ -233,3 +246,19 @@ def preprocess_logits_for_metrics(
         A tensor of shape (batch_size, seq_len) containing the predicted token IDs.
     """
     return logits.argmax(dim=-1)
+
+
+def ground_prediction_to_context(
+    prediction: str, context: str, threshold: int = 80
+) -> str:
+    """
+    Ground the model's prediction to the context using fuzzy string matching.
+    This is useful for causal LMs where the generated answer may not exactly match
+    the context span but is close enough.
+    """
+    result = partial_ratio_alignment(prediction, context)
+    if result.score >= threshold:
+        # extract the matched span from the context
+        grounded = context[result.dest_start : result.dest_end]
+        return grounded
+    return prediction  # fallback to raw generation

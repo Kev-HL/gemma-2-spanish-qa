@@ -16,6 +16,9 @@
         "max_seq_length": 512,
         "batched": true
     },
+    "metrics": {
+        "fuzzy_threshold": 100
+    },
     "trainer": {
         "output_dir": "./artifacts",
         "per_device_eval_batch_size": 4,

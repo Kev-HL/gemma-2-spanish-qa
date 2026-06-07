@@ -145,7 +145,10 @@ def main(config_path: str) -> None:
 
     # ============================ EVALUATION SETUP ================================
     # Set up metrics
-    compute_metrics = factory_compute_metrics_gemma2(eval_dataset, tokenizer)
+    fuzzy_threshold = cfg.get("metrics", {}).get("fuzzy_threshold", 100)
+    compute_metrics = factory_compute_metrics_gemma2(
+        eval_dataset, tokenizer, fuzzy_threshold=fuzzy_threshold
+    )
 
     # Set up Trainer for evaluation
     model_dtype = cfg["model"].get("model_dtype", "")
