@@ -11,6 +11,7 @@ import pytest
 from metrics import (
     factory_compute_metrics_mbert,
     factory_compute_metrics_gemma2,
+    ground_prediction_to_context,
 )
 
 
@@ -391,3 +392,31 @@ class TestFactoryComputeMetricsGemma2:
 
         assert mock_metric.compute.called_once()
         assert "Failed to compute metrics: SQuAD compute failed" in caplog.text
+
+
+def test_ground_prediction_to_context() -> None:
+    """
+    Test basic cases for the ground_prediction_to_context function, which is used in
+    the Gemma 2 metrics function.
+    Default threshold is 80.
+    """
+    # Exact match
+    assert ground_prediction_to_context("Paris", "Paris, France") == "Paris"
+
+    # Close match above threshold (result is ~88)
+    result = ground_prediction_to_context(
+        "the capital city of France is Paris", "Paris, the capital city of France"
+    )
+    assert result == "Paris, the capital city of France"
+
+    # Close match below threshold (result is ~75)
+    result = ground_prediction_to_context(
+        "the capital of France is Paris", "Paris, the capital city of France"
+    )
+    assert result == "the capital of France is Paris"
+
+    # Poor match below threshold (fallback)
+    assert ground_prediction_to_context("author", "Shakespeare wrote Romeo") == "author"
+
+    # Empty prediction
+    assert ground_prediction_to_context("", "context") == ""
