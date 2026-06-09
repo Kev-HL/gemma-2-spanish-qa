@@ -201,11 +201,16 @@ def factory_compute_metrics_gemma2(
         # Ground predictions to context using fuzzy matching
         if fuzzy_threshold < 100:
             for i in range(len(decoded_preds)):
-                decoded_preds[i] = ground_prediction_to_context(
-                    decoded_preds[i],
-                    raw_dataset[i]["context"],
-                    threshold=fuzzy_threshold,
-                )
+                try:
+                    decoded_preds[i] = ground_prediction_to_context(
+                        decoded_preds[i],
+                        raw_dataset[i]["context"],
+                        threshold=fuzzy_threshold,
+                    )
+                except Exception as e:
+                    # If grounding fails, keep original prediction
+                    logger.warning(f"Grounding failed for sample {i}: {e}")
+                    continue
 
         # Build predictions in SQuAD format using dataset order
         # [{'id': ..., 'prediction_text': ...}, ...]
