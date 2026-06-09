@@ -1,0 +1,26 @@
+{
+    "experiment": {
+        "team_name": "kev-hl-personal-team",
+        "project_name": "gemma-2-spanish-qa",
+        "experiment_name": "mbert_baseline_eval_xquad",
+        "tags": ["mbert", "eval", "test", "baseline"]
+    },
+    "data": {
+        "eval_data_path": "data/xquad/clean_xquad-es.json"
+    },
+    "model": {
+        "model_name_or_path": "artifacts/mbert_baseline/checkpoint-720"
+    },
+    "preprocessing": {
+        "max_seq_length": 512,
+        "batched": true
+    },
+    "trainer": {
+        "output_dir": "artifacts/mbert_baseline/checkpoint-720/eval_xquad",
+        "per_device_eval_batch_size": 128,
+        "eval_strategy": "epoch",
+        "report_to": "wandb",
+        "logging_steps": 10,
+        "logging_first_step": true
+    }
+}

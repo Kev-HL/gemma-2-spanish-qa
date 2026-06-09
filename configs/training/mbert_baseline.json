@@ -1,0 +1,47 @@
+{
+    "experiment": {
+        "team_name": "kev-hl-personal-team",
+        "project_name": "gemma-2-spanish-qa",
+        "experiment_name": "mbert_baseline",
+        "tags": ["mbert", "training", "baseline"]
+    },
+    "data": {
+        "train_data_path": "data/squad_es/clean_train-v1.1-es_small.json",
+        "eval_data_path": "data/squad_es/clean_dev-v1.1-es_small.json"
+    },
+    "model": {
+        "model_name_or_path": "bert-base-multilingual-cased",
+        "gradient_checkpointing_enabled": true
+    },
+    "preprocessing": {
+        "max_seq_length": 512,
+        "batched": true
+    },
+    "trainer": {
+        "output_dir": "./artifacts/mbert_baseline",
+        "num_train_epochs": 2,
+        "per_device_train_batch_size": 128,
+        "gradient_accumulation_steps": 1,
+        "per_device_eval_batch_size": 64,
+        "learning_rate": 3e-5,
+        "optim": "adamw_torch_fused",
+        "lr_scheduler_type": "cosine",
+        "warmup_steps": 36,
+        "weight_decay": 0.01,
+        "max_grad_norm": 1.0,
+        "fp16": false,
+        "bf16": false,
+        "fp16_full_eval": false,
+        "bf16_full_eval": false,
+        "torch_compile": true,
+        "eval_strategy": "steps",
+        "eval_steps": 36,
+        "save_strategy": "best",
+        "save_total_limit": 2,
+        "load_best_model_at_end": true,
+        "metric_for_best_model": "f1",
+        "report_to": "wandb",
+        "logging_steps": 10,
+        "logging_first_step": true
+    }
+}

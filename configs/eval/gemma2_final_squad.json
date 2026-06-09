@@ -1,0 +1,30 @@
+{
+    "experiment": {
+        "team_name": "kev-hl-personal-team",
+        "project_name": "gemma-2-spanish-qa",
+        "experiment_name": "gemma2_final_eval_squad",
+        "tags": ["gemma2", "eval", "validation", "final_model"]
+    },
+    "data": {
+        "eval_data_path": "data/squad_es/clean_dev-v1.1-es_small.json"
+    },
+    "model": {
+        "model_name_or_path": "artifacts/gemma2_final_model/checkpoint-1500",
+        "model_dtype": "bfloat16"
+    },
+    "preprocessing": {
+        "max_seq_length": 550,
+        "batched": true
+    },
+    "metrics": {
+        "fuzzy_threshold": 100
+    },
+    "trainer": {
+        "output_dir": "artifacts/artifacts/gemma2_final_model/checkpoint-1500/eval_squad",
+        "per_device_eval_batch_size": 4,
+        "eval_strategy": "epoch",
+        "report_to": "wandb",
+        "logging_steps": 10,
+        "logging_first_step": true
+    }
+}
